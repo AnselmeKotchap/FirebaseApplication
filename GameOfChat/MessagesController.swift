@@ -4,7 +4,7 @@
 //
 //  Created by Anselme Kotchap on 2017/01/15.
 //  Copyright © 2017 MIND. All rights reserved.
-//Uploading to remote repository
+//Uploading to remote repository plus new changes
 
 import UIKit
 import Firebase
