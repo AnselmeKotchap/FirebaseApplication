@@ -143,8 +143,7 @@ class MessagesController: UITableViewController {
         let ref = FIRDatabase.database().reference().child("users").child(chatPartnerId)
         
         ref.observeSingleEvent(of: .value, with: { (snapshot) in
-            print(snapshot)
-            
+                        
             guard let dictionary = snapshot.value as? [String: Any] else {
                 return
             }

@@ -21,12 +21,13 @@ class ChatmessageCell: UICollectionViewCell {
         return textV
     }()
     
+    static let customBlue = UIColor(r: 0, g: 137, b: 249)
     
     let bubbleView: UIView = {
         
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(r: 0, g: 137, b: 249)
+        view.backgroundColor = customBlue
         view.layer.cornerRadius = 12
         view.layer.masksToBounds = true
         
@@ -34,19 +35,52 @@ class ChatmessageCell: UICollectionViewCell {
         
     }()
     
+    let profileImageView: UIImageView = {
+        
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "monia")
+        imageView.layer.cornerRadius = 16
+        imageView.layer.masksToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
     var bubbleWidthAnchor: NSLayoutConstraint?
+    var bubbleViewRightAnchor: NSLayoutConstraint?
+    var bubbleViewLeftAnchor: NSLayoutConstraint?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        addSubview(profileImageView)
         addSubview(bubbleView)
         addSubview(textView)
+
+        
+        //x,y,w,h constraint
+        
+        profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
+        profileImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
         
         //x,y, w, h constraint for bubble
-        bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8).isActive = true
+        bubbleViewRightAnchor?.identifier = "bubbleRight"
+        
+        bubbleViewRightAnchor =  bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8)
+        bubbleViewRightAnchor?.priority = 999
+        bubbleViewRightAnchor?.isActive = true
+        
+        bubbleViewLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8)
+        bubbleViewLeftAnchor?.priority = 999
+        bubbleViewLeftAnchor?.identifier = "bubbleLeft"
+
+        
         bubbleView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         
         bubbleWidthAnchor = bubbleView.widthAnchor.constraint(equalToConstant: 200)
+        bubbleWidthAnchor?.identifier = "bubblewidth"
         
         bubbleWidthAnchor?.isActive = true
         
@@ -59,6 +93,9 @@ class ChatmessageCell: UICollectionViewCell {
 //        textView.widthAnchor.constraint(equalToConstant: 200).isActive = true
         textView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
         textView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
+        
+
+        
         
     }
     

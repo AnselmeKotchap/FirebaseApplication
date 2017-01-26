@@ -51,22 +51,55 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         return messages.count
     }
     
+    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ChatmessageCell
         
         let message = messages[indexPath.row]
+        
         cell.textView.text = message.text
         
         cell.bubbleWidthAnchor?.constant = estimateFrame(for: message.text!).width + 32
         
+        setup(cell: cell, with: message)
         
+        
+
         return cell
+    }
+    
+    private func setup(cell: ChatmessageCell, with message: Message){
+        
+        if message.fromId == FIRAuth.auth()?.currentUser?.uid {
+            
+            //outgoing blue
+            cell.bubbleView.backgroundColor = ChatmessageCell.customBlue
+            cell.textView.textColor = UIColor.white
+            cell.profileImageView.isHidden = true
+            
+            cell.bubbleViewLeftAnchor?.isActive = false
+            cell.bubbleViewRightAnchor?.isActive = true
+            
+            
+        } else {
+            
+            //incomming gray
+            cell.bubbleView.backgroundColor = UIColor(r: 240, g: 240, b: 240)
+            cell.textView.textColor = UIColor.black
+            cell.profileImageView.isHidden = false
+            
+            cell.bubbleViewRightAnchor?.isActive = false
+            cell.bubbleViewLeftAnchor?.isActive = true
+            
+        }
+        
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         collectionView?.collectionViewLayout.invalidateLayout()
     }
+    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
@@ -79,6 +112,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         return CGSize(width: view.frame.width, height: height)
     }
+    
     
     private func estimateFrame(for text: String) -> CGRect {
         
