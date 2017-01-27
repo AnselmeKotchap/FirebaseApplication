@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		21A60088734809719EE6D648 /* Pods_GameOfChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B14850559F87378239DF0DFF /* Pods_GameOfChat.framework */; };
 		4204CEB51E3686FD00000255 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4204CEB41E3686FD00000255 /* Message.swift */; };
+		42563D291E3B41EB00E0196B /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42563D281E3B41EB00E0196B /* CollectionViewCell.swift */; };
 		4274498A1E3786DE00FCA9BF /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 427449891E3786DE00FCA9BF /* UserCell.swift */; };
 		4292DD331E38C412003CE6F6 /* ChatmessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4292DD321E38C412003CE6F6 /* ChatmessageCell.swift */; };
 		429EF9031E35E1160084C809 /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429EF9021E35E1160084C809 /* ChatLogController.swift */; };
@@ -28,6 +29,7 @@
 /* Begin PBXFileReference section */
 		10395AD32D3BBB673F04CC2C /* Pods-GameOfChat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GameOfChat.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GameOfChat/Pods-GameOfChat.debug.xcconfig"; sourceTree = "<group>"; };
 		4204CEB41E3686FD00000255 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		42563D281E3B41EB00E0196B /* CollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		427449891E3786DE00FCA9BF /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		4292DD321E38C412003CE6F6 /* ChatmessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatmessageCell.swift; sourceTree = "<group>"; };
 		429EF9021E35E1160084C809 /* ChatLogController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 			children = (
 				427449891E3786DE00FCA9BF /* UserCell.swift */,
 				4292DD321E38C412003CE6F6 /* ChatmessageCell.swift */,
+				42563D281E3B41EB00E0196B /* CollectionViewCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -285,6 +288,7 @@
 			files = (
 				429EF9031E35E1160084C809 /* ChatLogController.swift in Sources */,
 				42CD53181E2BAB710012FF2E /* MessagesController.swift in Sources */,
+				42563D291E3B41EB00E0196B /* CollectionViewCell.swift in Sources */,
 				42CD532B1E2BB1590012FF2E /* LoginController.swift in Sources */,
 				4204CEB51E3686FD00000255 /* Message.swift in Sources */,
 				42FE657C1E30A1BD003CF098 /* User.swift in Sources */,
