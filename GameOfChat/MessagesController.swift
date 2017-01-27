@@ -14,6 +14,7 @@ class MessagesController: UITableViewController {
     var cellId = "cellId"
     var messages = [Message]()
     var messagesDictionary = [String: Message]()
+    var timer: Timer?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,9 +66,18 @@ class MessagesController: UITableViewController {
                         })
                     }
                     
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
+                    self.timer?.invalidate()
+                    
+                    self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false, block: { (time) in
+                        
+                        DispatchQueue.main.async {
+                            print("tableView reloaded ....\n")
+                            self.tableView.reloadData()
+                        }
+                        
+                    })
+
+
                 }
             })
             
@@ -75,40 +85,10 @@ class MessagesController: UITableViewController {
     }
     
     
-//    func observeMessages() {
-//        
-//        let ref = FIRDatabase.database().reference().child("messages")
-//        
-//        ref.observe(.childAdded, with: { (snapshot) in
-//            
-//            if let dictionary = snapshot.value as? [String: Any] {
-//                let message = Message()
-//                
-//                message.setValuesForKeys(dictionary)
-//                
-////                self.messages.append(message)
-//                
-//                if let toId = message.toId {
-//                    self.messagesDictionary[toId] = message
-//                    self.messages = Array(self.messagesDictionary.values)
-//                    self.messages.sort(by: { (message1, message2) -> Bool in
-//                        
-//                        if let time1 = message1.timeStamp?.intValue, let time2 = message2.timeStamp?.intValue {
-//                            return  time1 > time2
-//                        }
-//                        
-//                        return false
-//                    })
-//                }
-//                
-//                DispatchQueue.main.async {
-//                    self.tableView.reloadData()
-//                }
-//            }
-//            
-//        })
-//        
-//    }
+    func reloadTable(){
+        
+        
+    }
     
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
