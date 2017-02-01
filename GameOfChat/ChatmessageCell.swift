@@ -10,6 +10,7 @@ import UIKit
 
 class ChatmessageCell: UICollectionViewCell {
     
+    
     let textView: UITextView = {
         
         let textV = UITextView()
@@ -17,7 +18,10 @@ class ChatmessageCell: UICollectionViewCell {
         textV.font = UIFont.systemFont(ofSize: 16)
         textV.backgroundColor = UIColor.clear
         textV.textColor = .white
+        textV.isEditable = false
         textV.translatesAutoresizingMaskIntoConstraints = false
+        textV.isUserInteractionEnabled = true
+        
         return textV
     }()
     
@@ -30,6 +34,7 @@ class ChatmessageCell: UICollectionViewCell {
         view.backgroundColor = customBlue
         view.layer.cornerRadius = 12
         view.layer.masksToBounds = true
+
         
         return view
         
@@ -46,6 +51,21 @@ class ChatmessageCell: UICollectionViewCell {
         return imageView
     }()
     
+    let messageImageView: UIImageView = {
+        
+        let imageView = UIImageView(frame: .zero)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+//        imageView.image = UIImage(named: "gameofthrones_splash")
+        imageView.layer.cornerRadius = 16
+        imageView.layer.masksToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        imageView.isUserInteractionEnabled = true
+//        imageView.backgroundColor = UIColor.brown
+
+//        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleZoomTap)))
+        return imageView
+    }()
+    
     var bubbleWidthAnchor: NSLayoutConstraint?
     var bubbleViewRightAnchor: NSLayoutConstraint?
     var bubbleViewLeftAnchor: NSLayoutConstraint?
@@ -56,6 +76,13 @@ class ChatmessageCell: UICollectionViewCell {
         addSubview(profileImageView)
         addSubview(bubbleView)
         addSubview(textView)
+        
+        bubbleView.addSubview(messageImageView)
+        //x,y,w,h
+        messageImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
+        messageImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
+        messageImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
+        messageImageView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
 
         
         //x,y,w,h constraint
@@ -102,5 +129,6 @@ class ChatmessageCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     
 }
