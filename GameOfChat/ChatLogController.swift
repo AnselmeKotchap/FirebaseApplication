@@ -8,6 +8,8 @@
 
 import UIKit
 import Firebase
+import MobileCoreServices
+import AVFoundation
 
 class ChatLogController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate,  UINavigationControllerDelegate {
     
@@ -161,12 +163,79 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
         imagePickerController.allowsEditing = true
+        imagePickerController.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String]
         
         self.present(imagePickerController, animated: true, completion: nil)
 
     }
     
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        if let videoUrl = info[UIImagePickerControllerMediaURL] as? URL {
+            
+            //we selected an image
+            
+            
+            handleVideoSlectedFor(videoUrl: videoUrl)
+            
+
+        } else {
+            
+            handleImageSelectedFor(info: info)
+            
+        }
+        
+
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    private func handleVideoSlectedFor(videoUrl: URL) {
+        
+        let filename = "someFilename.mov"
+        
+        let uploadTask = FIRStorage.storage().reference().child(filename).putFile(videoUrl, metadata: nil, completion: { (metadata, error) in
+            
+            print("saving video to firebase \n")
+            if error != nil {
+                print("failed to upload video:", error!)
+                return
+            }
+            
+            if let storageUrl = metadata?.downloadURL()?.absoluteString {
+                
+//                let values: [String: Any] = ["imageUrl": imageUrl, "imageWidth": image.size.width, "imageHeight": image.size.height]
+                
+                let values: [String: Any] = ["videoUrl": storageUrl]
+                self.sendMessageWithProperties(properties: values)
+                
+            }
+        })
+        
+        
+        uploadTask.observe(.progress) { (snapshot) in
+            
+            if let completedUnitCount = snapshot.progress?.completedUnitCount, let totalUniCount = snapshot.progress?.totalUnitCount {
+                
+                let uploadPercentage = Float64(completedUnitCount) * 100 / Float64(totalUniCount)
+                self.navigationItem.title = String(format: "%.0f ", uploadPercentage) + "%"
+                
+            }
+            
+        }
+        
+        uploadTask.observe(.success) { (snapshot) in
+            self.navigationItem.title = self.user?.name
+        }
+    }
+    
+    private func handleImageSelectedFor(info: [String: Any]) {
+        //we selected an image
         
         var selectedImageFromPicker: UIImage?
         
@@ -186,11 +255,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             
         }
         
-        dismiss(animated: true, completion: nil)
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true, completion: nil)
     }
     
     func uploadToFirebaseStorageUsingImage(image: UIImage) {
@@ -416,7 +480,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         }
         
         
-        
     }
     
     private func sendMessageWith(imageUrl: String, for image: UIImage) {
@@ -424,7 +487,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         let values: [String: Any] = ["imageUrl": imageUrl, "imageWidth": image.size.width, "imageHeight": image.size.height]
 
         self.sendMessageWithProperties(properties: values)
-        
         
     }
     
@@ -558,8 +620,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 self.startingImageView?.isHidden = false
                 
             })
-            
-            
             
             
         }
