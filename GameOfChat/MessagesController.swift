@@ -29,8 +29,7 @@ class MessagesController: UITableViewController {
         
         checkIfUserIsLoggedIn()
         
-//        observeMessages()
-//        observeUserMEssages()
+
     }
     
     func observeUserMessages() {
@@ -47,6 +46,7 @@ class MessagesController: UITableViewController {
                 
                 let messageId = snapshot.key
                 
+//                print("in observe message: \(snapshot) ...")
                 
                 self.fetchMessagesWith(messageId: messageId)
                 
@@ -66,13 +66,12 @@ class MessagesController: UITableViewController {
         messagesReference.observeSingleEvent(of: .value, with: { (snapshot) in
             
             if let dictionary = snapshot.value as? [String: Any] {
+                print("snapshot is: \(dictionary)")
                 let message = Message(dictionary: dictionary)
                 
-//                message.setValuesForKeys(dictionary)
-                
-                //                self.messages.append(message)
-                
+                print("message iD is: \(message.chatPartnerId()) \n")
                 if let chatPartnerId = message.chatPartnerId() {
+                    //print("chatId = \(chatPartnerId) + message: \(message) \n")
                     self.messagesDictionary[chatPartnerId] = message
                     
                 }
@@ -107,6 +106,8 @@ class MessagesController: UITableViewController {
             }
             
         })
+        
+
 
     }
     

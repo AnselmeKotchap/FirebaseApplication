@@ -177,7 +177,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             //we selected an image
             
             
-            handleVideoSlectedFor(videoUrl: videoUrl)
+            handleVideoSlectedFor(url: videoUrl)
             
 
         } else {
@@ -195,11 +195,11 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         dismiss(animated: true, completion: nil)
     }
     
-    private func handleVideoSlectedFor(videoUrl: URL) {
+    private func handleVideoSlectedFor(url: URL) {
         
-        let filename = "someFilename.mov"
+        let filename = NSUUID().uuidString + ".mov"
         
-        let uploadTask = FIRStorage.storage().reference().child(filename).putFile(videoUrl, metadata: nil, completion: { (metadata, error) in
+        let uploadTask = FIRStorage.storage().reference().child("message_movies").child(filename).putFile(url, metadata: nil, completion: { (metadata, error) in
             
             print("saving video to firebase \n")
             if error != nil {
@@ -209,10 +209,19 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             
             if let storageUrl = metadata?.downloadURL()?.absoluteString {
                 
-//                let values: [String: Any] = ["imageUrl": imageUrl, "imageWidth": image.size.width, "imageHeight": image.size.height]
                 
-                let values: [String: Any] = ["videoUrl": storageUrl]
-                self.sendMessageWithProperties(properties: values)
+                if let thumbnailImage = self.thumbnailImageFor(fileUrl: url) {
+                    
+                    self.uploadToFirebaseStorageUsingImage(image: thumbnailImage, completion: { (imageUrl) in
+                        
+                        let values: [String: Any] = ["imageUrl": imageUrl, "imageWidth": thumbnailImage.size.width, "imageHeight": thumbnailImage.size.height, "videoUrl": storageUrl]
+                        self.sendMessageWithProperties(properties: values)
+                    })
+
+                }
+                
+                
+                
                 
             }
         })
@@ -234,6 +243,25 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         }
     }
     
+    private func thumbnailImageFor(fileUrl: URL) -> UIImage? {
+        
+        let asset = AVAsset(url: fileUrl)
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        
+        do {
+            
+            let thumbnail = try imageGenerator.copyCGImage(at: CMTimeMake(1, 60), actualTime: nil)
+            
+            return UIImage(cgImage: thumbnail)
+            
+        } catch let err {
+            
+            print(err)
+        }
+        
+        return nil
+    }
+    
     private func handleImageSelectedFor(info: [String: Any]) {
         //we selected an image
         
@@ -250,14 +278,14 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         }
         
         if let selectedImage = selectedImageFromPicker {
-            
-            uploadToFirebaseStorageUsingImage(image: selectedImage)
-            
+            uploadToFirebaseStorageUsingImage(image: selectedImage, completion: { (imageUrl) in
+                self.sendMessageWith(imageUrl: imageUrl, for: selectedImage)
+            })
         }
         
     }
     
-    func uploadToFirebaseStorageUsingImage(image: UIImage) {
+    func uploadToFirebaseStorageUsingImage(image: UIImage, completion: @escaping (_ imageUrl: String) -> ()) {
     
         let imageName = NSUUID().uuidString
         let ref = FIRStorage.storage().reference().child("message_images").child(imageName)
@@ -273,7 +301,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
                 }
                 if let imageUrl = metadata?.downloadURL()?.absoluteString {
                     
-                    self.sendMessageWith(imageUrl: imageUrl, for: image)
+                    completion(imageUrl)
                     
                 }
                 
@@ -503,8 +531,10 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             
             properties.forEach({values[$0] = $1})
             
+            print("values sent is: \(values) \n")
+            
             //            childRef.updateChildValues(values)
-            childRef.updateChildValues(properties, withCompletionBlock: { (error, ref) in
+            childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
                 
                 if error != nil {
                     return
@@ -583,10 +613,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
 //                self.backgroundView?.removeFromSuperview()
             })
             
-            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
-  
-                
-            }, completion: nil)
             
         }
         
