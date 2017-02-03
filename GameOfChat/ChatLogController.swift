@@ -360,12 +360,15 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         let message = messages[indexPath.row]
         
+        cell.message = message
+        
         cell.textView.text = message.text
         
         if let text = message.text {
             
             cell.bubbleWidthAnchor?.constant = estimateFrame(for: text).width + 32
             cell.textView.isHidden = false
+            
             
         }else if message.imageUrl != nil {
             //fall in here if it is image message
@@ -375,7 +378,9 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         }
         
         setup(cell: cell, with: message)
-
+        
+        cell.playButton.isHidden = message.videoUrl == nil
+        
         return cell
     }
     
@@ -649,6 +654,11 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             
             
         }
+    }
+    
+    @objc func playVideo(for url: String){
+        
+        print("paly video")
     }
 }
 

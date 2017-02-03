@@ -7,9 +7,20 @@
 //
 
 import UIKit
+import AVFoundation
 
 class ChatmessageCell: UICollectionViewCell {
     
+    var message: Message?
+    
+    let playButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let image = UIImage(named: "play")
+        button.setImage(image, for: .normal)
+        button.tintColor = UIColor.white
+        return button
+    }()
     
     let textView: UITextView = {
         
@@ -84,6 +95,14 @@ class ChatmessageCell: UICollectionViewCell {
         messageImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
         messageImageView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
 
+        bubbleView.addSubview(playButton)
+        playButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
+        playButton.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
+        playButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        playButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        playButton.addTarget(self, action: #selector(handlePlay), for: .touchUpInside)
+        
         
         //x,y,w,h constraint
         
@@ -128,6 +147,18 @@ class ChatmessageCell: UICollectionViewCell {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+
+    func handlePlay(){
+        
+        if let videoUrlString = message?.videoUrl, let url = URL(string: videoUrlString) {
+            
+            let player = AVPlayer(url: url)
+            player.play()
+            print("play vid")
+        }
+        
     }
     
     
