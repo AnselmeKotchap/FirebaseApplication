@@ -13,12 +13,23 @@ class ChatmessageCell: UICollectionViewCell {
     
     var message: Message?
     
+    let activityIndicator: UIActivityIndicatorView = {
+        
+        let aiv = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        aiv.translatesAutoresizingMaskIntoConstraints = false
+        aiv.hidesWhenStopped = true
+        
+        return aiv
+        
+    }()
+    
     let playButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         let image = UIImage(named: "play")
         button.setImage(image, for: .normal)
         button.tintColor = UIColor.white
+        button.isHidden = true
         return button
     }()
     
@@ -95,6 +106,7 @@ class ChatmessageCell: UICollectionViewCell {
         messageImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
         messageImageView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
 
+        //adding the playbutton
         bubbleView.addSubview(playButton)
         playButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
         playButton.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
@@ -103,6 +115,12 @@ class ChatmessageCell: UICollectionViewCell {
         
         playButton.addTarget(self, action: #selector(handlePlay), for: .touchUpInside)
         
+        //adding the activity indicator view
+        bubbleView.addSubview(activityIndicator)
+        activityIndicator.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
+        activityIndicator.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        activityIndicator.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         //x,y,w,h constraint
         
@@ -149,17 +167,32 @@ class ChatmessageCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-
+    var  playerLayer: AVPlayerLayer?
+    var player: AVPlayer?
+    
     func handlePlay(){
         
         if let videoUrlString = message?.videoUrl, let url = URL(string: videoUrlString) {
             
-            let player = AVPlayer(url: url)
-            player.play()
+            player = AVPlayer(url: url)
+            
+            playerLayer = AVPlayerLayer(player: player)
+            playerLayer?.frame = bubbleView.bounds
+            bubbleView.layer.addSublayer(playerLayer!)
+            player?.play()
+            activityIndicator.startAnimating()
+            playButton.isHidden = true
             print("play vid")
         }
         
     }
     
+    //is called before the cell is reused
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        playerLayer?.removeFromSuperlayer()
+        player?.pause()
+        activityIndicator.stopAnimating()
+    }
     
 }

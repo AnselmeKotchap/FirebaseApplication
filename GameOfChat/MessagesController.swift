@@ -26,11 +26,45 @@ class MessagesController: UITableViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(handleNewMessage))
         
         tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
+        tableView.allowsMultipleSelectionDuringEditing = true
         
         checkIfUserIsLoggedIn()
         
+        
 
     }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+            return
+        }
+        
+        let message = self.messages[indexPath.row]
+        
+        if let chatPartnerId = message.chatPartnerId() {
+            
+            FIRDatabase.database().reference().child("user-messages").child(uid).child(chatPartnerId).removeValue(completionBlock: { (error, ref) in
+                
+                if error != nil {
+                    print("failed to delemessage:", error!)
+                    return
+                }
+                self.messagesDictionary.removeValue(forKey: chatPartnerId)
+                self.attemptRelaodTable()
+                
+//                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                
+            })
+            
+        }
+        
+    }
+    
     
     func observeUserMessages() {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {
